@@ -1,0 +1,10 @@
+<script setup>
+  import LoginVue from '@/views/Login.vue'
+  import LayoutVue from '@/views/Layout.vue'
+</script>
+
+<template>
+  <LayoutVue/>
+  <LoginVue/>
+</template>
+

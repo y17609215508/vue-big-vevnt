@@ -2,6 +2,7 @@
 import { User, Lock } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
+
 //控制注册与登录表单的显示， 默认显示注册
 const isRegister = ref(false)
 
@@ -55,12 +56,23 @@ const register = async () => {
     ElMessage.success(result.msg ? result.msg : '注册成功')
 }
 
+// 导入pinia
+import { useTokenStore } from '../stores/token';
+const tokenStore = useTokenStore() //调用useTokenStore得到状态
+
+import { useRouter } from 'vue-router';
+const router =useRouter() // 调用函数得到路由器
 // 登录
 const login = async () => {
     let result = await userLoginService(registerData.value);
+
+    tokenStore.setToken(result.data)// 使用pinia存储token
+    
     ElMessage.success(result.msg ? result.msg : '登录成功');
+    router.push('/') // 跳转
 
 }
+
 
 </script>
 

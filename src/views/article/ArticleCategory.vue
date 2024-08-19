@@ -4,7 +4,7 @@ import {
     Delete
 } from '@element-plus/icons-vue'
 import { ref } from 'vue'
-import { articleCategoryListService, articelCategoryAddService, articleCategoryUpdate ,articleCategoryDelete} from '../../api/article';
+import { articleCategoryListService, articelCategoryAddService, articleCategoryUpdateService, articleCategoryDeleteService } from '../../api/article';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 // 获取文章列表
@@ -65,7 +65,7 @@ const showDialog = (row) => {
 
 // 编辑分类
 const updateCategory = async () => {
-    let result = await articleCategoryUpdate(categoryModel.value);
+    let result = await articleCategoryUpdateService(categoryModel.value);
     ElMessage.success(result.msg ? result.msg : '修改成功');
     articleCategoryList();
     dialogVisible.value = false;
@@ -89,9 +89,9 @@ const deleteCategory = (row) => {
             type: 'warning',
         }
     )
-        .then(async() => {
+        .then(async () => {
             // 调用删除接口
-            let result = await articleCategoryDelete(row.id);
+            let result = await articleCategoryDeleteService(row.id);
             ElMessage({
                 type: 'success',
                 message: '删除成功',
@@ -105,6 +105,8 @@ const deleteCategory = (row) => {
             })
         })
 }
+
+
 </script>
 <template>
     <el-card class="page-container">

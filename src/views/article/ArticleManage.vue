@@ -114,11 +114,11 @@ const articleAdd = async (clickState) => {
     articleModel.value.state = clickState;
     let result = artilceAddService(articleModel.value);
     ElMessage.success(result.msg?result.msg:'添加成功');
-
-    // 关闭窗口
-    visibleDrawer.value=false;
     // 刷新列表
     articleList();
+    // 关闭窗口
+    visibleDrawer.value=false;
+
 
 }
 </script>

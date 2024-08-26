@@ -7,7 +7,7 @@ import { ref } from 'vue'
 import { articleCategoryListService, articelCategoryAddService, articleCategoryUpdateService, articleCategoryDeleteService } from '../../api/article';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
-// 获取文章列表
+// 获取文章分类列表
 const articleCategoryList = async () => {
     let result = await articleCategoryListService();
     categorys.value = result.data
@@ -45,7 +45,7 @@ const rules = {
 // 调用接口，添加文章分类
 const addCategory = async () => {
     let result = await articelCategoryAddService(categoryModel.value);
-    ElMessage.success(result.msg ? result.msg : '添加成功');
+    ElMessage.success(result.message ? result.message : '添加成功');
     // 调用获取所有文章接口，刷新页面
     articleCategoryList();
     // 关闭窗口
@@ -66,7 +66,7 @@ const showDialog = (row) => {
 // 编辑分类
 const updateCategory = async () => {
     let result = await articleCategoryUpdateService(categoryModel.value);
-    ElMessage.success(result.msg ? result.msg : '修改成功');
+    ElMessage.success(result.message ? result.message : '修改成功');
     articleCategoryList();
     dialogVisible.value = false;
 }

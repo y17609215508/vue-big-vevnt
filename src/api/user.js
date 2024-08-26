@@ -38,9 +38,5 @@ export const userUpdateAvatarService = (avatarUrl) => {
 
 // 修改密码
 export const userUpdatePassword = (userPwdData)=>{
-    const params = new URLSearchParams()
-    params.append('old_pwd',userPwdData.olePassword)
-    params.append('new_pwd',userPwdData.newPassword)
-    params.append('re_pwd',userPwdData.rePassword)
-    return request.patch('/user/updatePwd',params)
+    return request.patch('/user/updatePwd',userPwdData)
 }

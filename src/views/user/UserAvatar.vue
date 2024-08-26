@@ -22,7 +22,7 @@ import { userUpdateAvatarService } from '../../api/user';
 import { ElMessage } from 'element-plus';
 const updateAvatar = async () => {
     let result = await userUpdateAvatarService(imgUrl.value);
-    ElMessage.success(result.msg ? result.msg : '头像修改成功');
+    ElMessage.success(result.message ? result.message : '头像修改成功');
     userInfoStore.info.userPic = imgUrl.value
 }
 

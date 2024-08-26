@@ -26,14 +26,14 @@ const state = ref('')
 //文章列表数据模型
 const articles = ref([
     {
-        "id": 5,
-        "title": "陕西旅游攻略",
-        "content": "兵马俑,华清池,法门寺,华山...爱去哪去哪...",
-        "coverImg": "https://big-event-gwd.oss-cn-beijing.aliyuncs.com/9bf1cf5b-1420-4c1b-91ad-e0f4631cbed4.png",
-        "state": "草稿",
-        "categoryId": 2,
-        "createTime": "2023-09-03 11:55:30",
-        "updateTime": "2023-09-03 11:55:30"
+        "id": '',
+        "title": '',
+        "content": '',
+        "coverImg": '',
+        "state": '',
+        "categoryId": '',
+        "createTime": '',
+        "updateTime": ''
     }
 ])
 
@@ -113,14 +113,37 @@ import { ElMessage } from 'element-plus';
 const articleAdd = async (clickState) => {
     articleModel.value.state = clickState;
     let result = artilceAddService(articleModel.value);
-    ElMessage.success(result.msg?result.msg:'添加成功');
+    ElMessage.success(result.message ? result.message : '添加成功');
     // 刷新列表
     articleList();
     // 关闭窗口
-    visibleDrawer.value=false;
+    visibleDrawer.value = false;
+}
 
+// 发布文章清空数据回显
+const clearData = ()=>{
+    articleModel.value.title = '';
+    articleModel.value.coverImg = '';
+    articleModel.value.state = '';
+    articleModel.value.content = '';
+}
+
+// 定义变量，控制标题文字
+const title = ref('')
+
+// 编辑文章数据回显
+const showDialog = (row) => {
+    console.log(row)
+    visibleDrawer.value = true;
+    title.value = '编辑文章';
+    articleModel.value.title = row.title;
+    articleModel.value.coverImg = row.coverImg;
+    articleModel.value.content = row.content;
+    articleModel.value.categoryId = row.categoryName;
 
 }
+
+
 </script>
 <template>
     <el-card class="page-container">
@@ -128,7 +151,7 @@ const articleAdd = async (clickState) => {
             <div class="header">
                 <span>文章管理</span>
                 <div class="extra">
-                    <el-button type="primary" @click="visibleDrawer = true">添加文章</el-button>
+                    <el-button type="primary" @click="visibleDrawer = true; title = '添加文章';clearData()">添加文章</el-button>
                 </div>
             </div>
         </template>
@@ -160,7 +183,7 @@ const articleAdd = async (clickState) => {
             <el-table-column label="状态" prop="state"></el-table-column>
             <el-table-column label="操作" width="100">
                 <template #default="{ row }">
-                    <el-button :icon="Edit" circle plain type="primary"></el-button>
+                    <el-button :icon="Edit" circle plain type="primary" @click="showDialog(row)"></el-button>
                     <el-button :icon="Delete" circle plain type="danger"></el-button>
                 </template>
             </el-table-column>
@@ -174,7 +197,7 @@ const articleAdd = async (clickState) => {
             @current-change="onCurrentChange" style="margin-top: 20px; justify-content: flex-end" />
 
         <!-- 抽屉 -->
-        <el-drawer v-model="visibleDrawer" title="添加文章" direction="rtl" size="50%">
+        <el-drawer v-model="visibleDrawer" :title=title direction="rtl" size="50%">
             <!-- 添加文章表单 -->
             <el-form :model="articleModel" label-width="100px">
                 <el-form-item label="文章标题">

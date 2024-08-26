@@ -53,7 +53,7 @@ import { userRegisterService, userLoginService } from '@/api/user.js'
 // 调用后台接口完成注册
 const register = async () => {
     let result = await userRegisterService(registerData.value);
-    ElMessage.success(result.msg ? result.msg : '注册成功')
+    ElMessage.success(result.message ? result.message : '注册成功')
 }
 
 // 导入pinia
@@ -68,7 +68,7 @@ const login = async () => {
 
     tokenStore.setToken(result.data)// 使用pinia存储token
     
-    ElMessage.success(result.msg ? result.msg : '登录成功');
+    ElMessage.success(result.message ? result.message : '登录成功');
     router.push('/') // 跳转
 
 }

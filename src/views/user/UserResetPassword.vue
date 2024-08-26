@@ -2,9 +2,9 @@
 import { ref } from 'vue'
 
 const userPassword = ref({
-    oldPassword:'',
-    newPassword:'',
-    rePassword:''
+    oldPassword: '',
+    newPassword: '',
+    rePassword: ''
 })
 
 const validatePass2 = (rule, value, callback) => {
@@ -27,15 +27,28 @@ const rules = {
         { min: 5, max: 16, message: '请输入5-16位非空字符', trigger: 'blur' }
     ],
     rePassword: [
-        { required:true, validator: validatePass2, trigger: 'blur' }
+        { required: true, validator: validatePass2, trigger: 'blur' }
     ]
 }
 
+// 修改密码
 import { ElMessage } from 'element-plus';
 import { userUpdatePassword } from '../../api/user';
-const updatePassword = async ()=>{
+import { useTokenStore } from '../../stores/token';
+import { useUserInfoStore } from '../../stores/userInfo';
+import { useRouter } from 'vue-router';
+const tokenStore = useTokenStore()
+const userInfoStore = useUserInfoStore()
+const router = useRouter()
+const updatePassword = async () => {
     let result = await userUpdatePassword(userPassword.value)
-    ElMessage.success(result.msg ? result.msg : '修改成功')
+    // 清空pinia、路由跳转至登录页界面
+    tokenStore.removeToken()
+    userInfoStore.removeInfo()
+    router.push('/login')
+    ElMessage.success(result.message ? result.message : '修改成功')
+
+
 }
 
 

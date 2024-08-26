@@ -28,7 +28,7 @@ import { userUpdateUserInfoService } from '../../api/user';
 import { ElMessage } from 'element-plus';
 const updateUserInfo = async () => {
     let result = userUpdateUserInfoService(userInfo.value);
-    ElMessage.success(result.msg ? result.msg : '修改成功')
+    ElMessage.success(result.message ? result.message : '修改成功')
     // 更新pinia中数据
     userInfoStore.info.nickname = userInfo.value.nickname;
     userInfoStore.info.email = userInfo.value.email;

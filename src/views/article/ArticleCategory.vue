@@ -91,7 +91,7 @@ const deleteCategory = (row) => {
     )
         .then(async () => {
             // 调用删除接口
-            let result = await articleCategoryDeleteService(row.id);
+            await articleCategoryDeleteService(row.id);
             ElMessage({
                 type: 'success',
                 message: '删除成功',

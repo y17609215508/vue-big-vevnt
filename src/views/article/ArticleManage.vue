@@ -54,7 +54,7 @@ const onCurrentChange = (num) => {
 }
 
 // 加载文章分类
-import { articleCategoryListService, artilceListService, artilceAddService } from '@/api/article.js';
+import { articleCategoryListService, artilceListService, artilceAddService, articleUpdateService, articleDeleteService } from '@/api/article.js';
 const articleCategoryList = async () => {
     let result = await articleCategoryListService();
     categorys.value = result.data
@@ -97,7 +97,7 @@ const articleModel = ref({
     categoryId: '',
     coverImg: '',
     content: '',
-    state: ''
+    state: '',
 })
 // 导入token,使用pinia
 import { useTokenStore } from '@/stores/token.js';
@@ -109,10 +109,10 @@ const uploadSuccess = (result) => {
 }
 
 // 文章发布
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 const articleAdd = async (clickState) => {
     articleModel.value.state = clickState;
-    let result = artilceAddService(articleModel.value);
+    let result = await artilceAddService(articleModel.value);
     ElMessage.success(result.message ? result.message : '添加成功');
     // 刷新列表
     articleList();
@@ -121,29 +121,66 @@ const articleAdd = async (clickState) => {
 }
 
 // 发布文章清空数据回显
-const clearData = ()=>{
+const clearData = () => {
     articleModel.value.title = '';
     articleModel.value.coverImg = '';
-    articleModel.value.state = '';
-    articleModel.value.content = '';
+    articleModel.value.categoryId = '';
+    articleModel.value.content = ' '
 }
-
 // 定义变量，控制标题文字
 const title = ref('')
 
 // 编辑文章数据回显
 const showDialog = (row) => {
-    console.log(row)
     visibleDrawer.value = true;
     title.value = '编辑文章';
     articleModel.value.title = row.title;
-    articleModel.value.coverImg = row.coverImg;
     articleModel.value.content = row.content;
-    articleModel.value.categoryId = row.categoryName;
+    articleModel.value.coverImg = row.coverImg;
+    articleModel.value.categoryId = row.categoryId;
+    articleModel.value.id = row.id
+}
+
+// 文章修改
+const articleUpdate = async (clickState) => {
+    articleModel.value.state = clickState
+    let result = await articleUpdateService(articleModel.value)
+    ElMessage.success(result.message ? result.message : '修改成功')
+    // 刷新列表
+    articleList();
+    // 关闭窗口
+    visibleDrawer.value = false;
 
 }
 
-
+// 删除文章
+const deleteArticle = (row) => {
+    // 确认删除提示框
+    ElMessageBox.confirm(
+        '确认删除文章?',
+        '温馨提示',
+        {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+        }
+    )
+        .then(async () => {
+            // 调用删除接口
+            await articleDeleteService(row.id)
+            ElMessage({
+                type: 'success',
+                message: '删除成功',
+            })
+            articleList();
+        })
+        .catch(() => {
+            ElMessage({
+                type: 'info',
+                message: '取消删除',
+            })
+        })
+}
 </script>
 <template>
     <el-card class="page-container">
@@ -151,7 +188,8 @@ const showDialog = (row) => {
             <div class="header">
                 <span>文章管理</span>
                 <div class="extra">
-                    <el-button type="primary" @click="visibleDrawer = true; title = '添加文章';clearData()">添加文章</el-button>
+                    <el-button type="primary"
+                        @click="clearData(); visibleDrawer = true; title = '添加文章';">添加文章</el-button>
                 </div>
             </div>
         </template>
@@ -184,7 +222,7 @@ const showDialog = (row) => {
             <el-table-column label="操作" width="100">
                 <template #default="{ row }">
                     <el-button :icon="Edit" circle plain type="primary" @click="showDialog(row)"></el-button>
-                    <el-button :icon="Delete" circle plain type="danger"></el-button>
+                    <el-button :icon="Delete" circle plain type="danger" @click="deleteArticle(row)"></el-button>
                 </template>
             </el-table-column>
             <template #empty>
@@ -226,8 +264,10 @@ const showDialog = (row) => {
                     </div>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="articleAdd('已发布')">发布</el-button>
-                    <el-button type="info" @click="articleAdd('草稿')">草稿</el-button>
+                    <el-button type="primary"
+                        @click="title === '编辑文章' ? articleUpdate('已发布') : articleAdd('已发布')">发布</el-button>
+                    <el-button type="info"
+                        @click="title === '编辑文章' ? articleUpdate('草稿') : articleAdd('草稿')">草稿</el-button>
                 </el-form-item>
             </el-form>
         </el-drawer>
